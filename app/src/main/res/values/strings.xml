@@ -10,4 +10,9 @@
     <string name="price_title">Price</string>
     <string name="quantity_title">Quantity</string>
     <string name="supplier_title">Supplier</string>
+
+    <!--labels for overall menu items-->
+    <string name="insert_dummy_data">Insert dummy data</string>
+    <string name="clear_all">Clear all</string>
+    <string name="change_view">Change view</string>
 </resources>
