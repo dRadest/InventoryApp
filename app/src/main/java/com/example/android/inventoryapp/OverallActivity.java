@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ListView;
 
 public class OverallActivity extends AppCompatActivity {
 
@@ -22,5 +23,14 @@ public class OverallActivity extends AppCompatActivity {
                 startActivity(detailActivityIntent);
             }
         });
+
+        // find list view of items
+        ListView itemListView = (ListView) findViewById(R.id.list_view);
+
+        // find and set empty view on list view
+        View emptyView = findViewById(R.id.empty_view);
+        itemListView.setEmptyView(emptyView);
+
+
     }
 }
