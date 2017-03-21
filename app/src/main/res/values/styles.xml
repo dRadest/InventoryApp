@@ -8,4 +8,17 @@
         <item name="colorAccent">#8BC34A</item>
     </style>
 
+    <!--style for title labels of detail textviews-->
+    <style name="TextboxDetail">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">48sp</item>
+    </style>
+
+    <!--style for item detail text-->
+    <style name="ItemDetailText">
+        <item name="android:fontFamily"> sans-serif</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
 </resources>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:id="@+id/image_relative_layout">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/hammer"
+            android:scaleType="centerCrop"
+            android:id="@+id/item_imageview"
+            android:layout_marginRight="16dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toRightOf="@id/item_imageview"
+            android:id="@+id/price_linear_layout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                style="@style/TextboxDetail"
+                android:id="@+id/price_textview"
+                android:layout_marginRight="12dp"
+                android:layout_toRightOf="@id/item_imageview"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_price_textview"
+                tools:text="55 $"
+                style="@style/ItemDetailText"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@id/price_textview"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toRightOf="@id/item_imageview"
+            android:layout_below="@id/price_linear_layout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantity"
+                style="@style/TextboxDetail"
+                android:id="@+id/quantity_textview"
+                android:layout_marginRight="12dp"
+                android:layout_toRightOf="@id/item_imageview"
+                android:layout_below="@id/price_textview"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_quantity_textview"
+                style="@style/ItemDetailText"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@id/item_quantity_textview"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                tools:text="20"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supplier"
+            style="@style/TextboxDetail"
+            android:id="@+id/supplier_textview"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="guma proizvod"
+            android:textAllCaps="true"
+            android:ellipsize="end"
+            android:maxLines="2"
+            style="@style/ItemDetailText"
+            android:id="@+id/supplier_name_textview" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="gumaproizvod.com"
+            style="@style/ItemDetailText"
+            android:textStyle="italic"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/supplier_web_textview"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="contact@gumaproizvod.com"
+            style="@style/ItemDetailText"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="italic"
+            android:id="@+id/supplier_email_textview"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Track"
+            android:layout_marginRight="8dp"
+            android:id="@+id/button_track"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Ship"
+            android:layout_marginLeft="8dp"
+            android:id="@+id/button_ship"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>
