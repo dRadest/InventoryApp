@@ -21,7 +21,8 @@
                 android:layout_height="100dp"
                 android:layout_marginRight="16dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/hammer" />
+                android:background="#dcedc8"
+                 />
 
             <LinearLayout
                 android:id="@+id/price_linear_layout"
