@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Inventory App</string>
 
+    <!--labels for the empty view-->
     <string name="empty_view_title_text">No items to display</string>
     <string name="empty_view_subtitle_text">Add an item</string>
+
+    <!--labels for detail textviews-->
+    <string name="price_title">Price</string>
+    <string name="quantity_title">Quantity</string>
+    <string name="supplier_title">Supplier</string>
 </resources>
