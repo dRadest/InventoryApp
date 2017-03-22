@@ -2,6 +2,7 @@ package com.example.android.inventoryapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +30,9 @@ public class OverallActivity extends AppCompatActivity {
     // InventoryDbHelper instance to preform CRUD operations
     private InventoryDbHelper mDbHelper;
 
+    // Cursor to retrieve data from the table
+    private Cursor mCursor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +51,24 @@ public class OverallActivity extends AppCompatActivity {
         // instanciate mDbHelper
         mDbHelper = new InventoryDbHelper(getApplicationContext());
 
+        // get readable database
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // query the database and retrieve cursor
+        mCursor = queryDatabase(db);
+
+        // setup cursor adapter
+        InventoryCursorAdapter inCursorAdapter = new InventoryCursorAdapter(this, mCursor);
+
         // find list view of items
         ListView itemListView = (ListView) findViewById(R.id.list_view);
 
         // find and set empty view on list view
         View emptyView = findViewById(R.id.empty_view);
         itemListView.setEmptyView(emptyView);
+
+        // set cursor adapter on list view
+        itemListView.setAdapter(inCursorAdapter);
 
     }
 
@@ -110,6 +126,32 @@ public class OverallActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Successfully entered item", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // helper query function
+    private Cursor queryDatabase (SQLiteDatabase db) {
+        // which columns to use (all)
+        String[] projection = {
+                InventoryEntry._ID,
+                InventoryEntry.COLUMN_PRICE,
+                InventoryEntry.COLUMN_QUANTITY,
+                InventoryEntry.COLUMN_SUPPLIER_NAME,
+                InventoryEntry.COLUMN_SUPPLIER_WEB,
+                InventoryEntry.COLUMN_SUPPLIER_EMAIL,
+                InventoryEntry.COLUMN_PICTURE
+        };
+
+        Cursor cursor = db.query(
+                InventoryEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+                );
+        return cursor;
+
     }
 
 }
