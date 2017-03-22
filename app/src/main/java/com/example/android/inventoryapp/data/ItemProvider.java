@@ -12,8 +12,6 @@ import android.util.Log;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
-import static android.R.attr.name;
-
 
 /**
  * {@link ContentProvider} for Inventory app.
@@ -144,7 +142,20 @@ public class ItemProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case ITEMS:
+                return updateItem(uri, values, selection, selectionArgs);
+            case ITEM:
+                // For the PET_ID code, extract out the ID from the URI,
+                // so we know which row to update. Selection will be "_id=?" and selection
+                // arguments will be a String array containing the actual ID.
+                selection = InventoryEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                return updateItem(uri, values, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
     }
 
     /**
@@ -187,5 +198,60 @@ public class ItemProvider extends ContentProvider {
 
         // Return the new URI with the ID (of the newly inserted row) appended at the end
         return ContentUris.withAppendedId(uri, id);
+    }
+
+    /**
+     * Update items in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more items).
+     * Return the number of rows that were successfully updated.
+     */
+    private int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // If the {@link InventoryEntry#COLUMN_SUPPLIER_NAME} key is present,
+        // check that the name value is not null.
+        if (values.containsKey(InventoryEntry.COLUMN_SUPPLIER_NAME)) {
+            String name = values.getAsString(InventoryEntry.COLUMN_SUPPLIER_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Supplier's name required");
+            }
+        }
+
+        // If the {@link PetEntry#COLUMN_PRICE} key is present,
+        // check that the price value is valid.
+        if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
+            Integer price = values.getAsInteger(InventoryEntry.COLUMN_PRICE);
+            if (price < 0) {
+                throw new IllegalArgumentException("Price cannot be negative");
+            }
+        }
+
+        // If the {@link PetEntry#COLUMN_QUANTITY} key is present,
+        // check that the weight value is valid.
+        if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
+            // Check that the weight is greater than or equal to 0 kg
+            Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
+            if (quantity < 0) {
+                throw new IllegalArgumentException("Quantity cannot be negative");
+            }
+        }
+
+        // If there are no values to update, then don't try to update the database
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        // Otherwise, get writeable database to update the data
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Perform the update on the database and get the number of rows affected
+        int rowsUpdated = database.update(InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of rows updated
+        return rowsUpdated;
     }
 }
