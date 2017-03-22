@@ -1,5 +1,6 @@
 package com.example.android.inventoryapp.data;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -20,6 +21,13 @@ public class InventoryContract {
     private InventoryContract(){}
 
     public static class InventoryEntry implements BaseColumns{
+
+        // MIME type of list of items
+        public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/"
+                + CONTENT_AUTHORITY + "/" + PATH_ITEMS;
+        // MIME type of a single row
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/"
+                + CONTENT_AUTHORITY + "/" + PATH_ITEMS;
 
         // content uri to access item data in content provider
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ITEMS);
