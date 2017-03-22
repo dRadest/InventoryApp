@@ -2,6 +2,8 @@ package com.example.android.inventoryapp;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +72,13 @@ public class InventoryCursorAdapter extends CursorAdapter {
         String supName = cursor.getString(nameColumnIndex);
         int itemPrice = cursor.getInt(priceColumnIndex);
         int itemQuantity = cursor.getInt(quantityColumnIndex);
+        // retrieving an image from database
+        byte[] imageByteArray = cursor.getBlob(imageColumnIndex);
+        if (imageByteArray != null){
+            Bitmap itemImage = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+            itemImageView.setImageBitmap(itemImage);
+        }
+
 
         // String for summary text view
         String summaryString = itemQuantity + " for " + itemPrice + " $ each";
@@ -77,5 +86,6 @@ public class InventoryCursorAdapter extends CursorAdapter {
         // Update the TextViews with the attributes for the current item
         nameTextView.setText(supName);
         summaryTextView.setText(summaryString);
+
     }
 }
