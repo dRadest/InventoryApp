@@ -16,7 +16,6 @@ public class InventoryContract {
     // path to items table
     public static final String PATH_ITEMS = "items";
 
-
     // private constructor
     private InventoryContract(){}
 
