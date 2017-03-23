@@ -15,5 +15,11 @@
     <string name="insert_dummy_data">Insert dummy data</string>
     <string name="clear_all">Clear all</string>
     <string name="change_view">Change view</string>
-
+    <!--labels for buttons and corresponding views in detail activity-->
+    <string name="track_button">Track</string>
+    <string name="track_item">Track item (sell)</string>
+    <string name="order_button">Order</string>
+    <string name="order_item">Order items</string>
+    <string name="delete_button">Delete</string>
+    <string name="delete_item">Delete item</string>
 </resources>
