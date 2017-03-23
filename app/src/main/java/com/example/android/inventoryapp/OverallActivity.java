@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,9 +28,6 @@ import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
 public class OverallActivity extends AppCompatActivity {
 
-    // InventoryDbHelper instance to preform CRUD operations
-    private InventoryDbHelper mDbHelper;
-
     // Cursor to retrieve data from the table
     private Cursor mCursor;
 
@@ -48,28 +46,12 @@ public class OverallActivity extends AppCompatActivity {
             }
         });
 
-        // instanciate mDbHelper
-        mDbHelper = new InventoryDbHelper(getApplicationContext());
+    }
 
-        // get readable database
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // query the database and retrieve cursor
-        mCursor = queryDatabase(db);
-
-        // setup cursor adapter
-        InventoryCursorAdapter inCursorAdapter = new InventoryCursorAdapter(this, mCursor);
-
-        // find list view of items
-        ListView itemListView = (ListView) findViewById(R.id.list_view);
-
-        // find and set empty view on list view
-        View emptyView = findViewById(R.id.empty_view);
-        itemListView.setEmptyView(emptyView);
-
-        // set cursor adapter on list view
-        itemListView.setAdapter(inCursorAdapter);
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDb();
     }
 
     @Override
@@ -100,8 +82,6 @@ public class OverallActivity extends AppCompatActivity {
 
     // helper method to insert dummy
     public void insertDummyItem(){
-        // get writable database from mDbHelper
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // convert bitmap to byte array
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.hammer);
@@ -119,18 +99,11 @@ public class OverallActivity extends AppCompatActivity {
         values.put(InventoryEntry.COLUMN_PICTURE, byteArray);
 
         // insert it into items table
-        long rowId = db.insert(InventoryEntry.TABLE_NAME, null, values);
-
-        if (rowId == -1){
-            Toast.makeText(this, "Error inserting item", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Successfully entered item", Toast.LENGTH_SHORT).show();
-        }
+        getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
     }
 
-    // helper query function
-    private Cursor queryDatabase (SQLiteDatabase db) {
-        // which columns to use (all)
+    private void displayDb(){
+        // which columns to use in a query (all)
         String[] projection = {
                 InventoryEntry._ID,
                 InventoryEntry.COLUMN_PRICE,
@@ -141,17 +114,26 @@ public class OverallActivity extends AppCompatActivity {
                 InventoryEntry.COLUMN_PICTURE
         };
 
-        Cursor cursor = db.query(
-                InventoryEntry.TABLE_NAME,
+        // query the database and retrieve cursor
+        mCursor = getContentResolver().query(
+                InventoryEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
-                null,
-                null,
-                null
-                );
-        return cursor;
+                null);
 
+        // setup cursor adapter
+        InventoryCursorAdapter inCursorAdapter = new InventoryCursorAdapter(this, mCursor);
+
+        // find list view of items
+        ListView itemListView = (ListView) findViewById(R.id.list_view);
+
+        // find and set empty view on list view
+        View emptyView = findViewById(R.id.empty_view);
+        itemListView.setEmptyView(emptyView);
+
+        // set cursor adapter on list view
+        itemListView.setAdapter(inCursorAdapter);
     }
 
 }

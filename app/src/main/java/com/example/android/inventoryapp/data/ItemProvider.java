@@ -30,7 +30,7 @@ public class ItemProvider extends ContentProvider {
     private static final int ITEM = 101;
 
     static {
-        //this uri used to provide access to multiple rows in items table
+        // this uri used to provide access to multiple rows in items table
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_ITEMS, ITEMS);
         // this uri used to provide acces to a single row in items table
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_ITEMS + "/#", ITEM);
