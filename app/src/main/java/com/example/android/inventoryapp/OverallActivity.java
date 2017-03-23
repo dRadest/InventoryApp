@@ -1,6 +1,7 @@
 package com.example.android.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
+
+import static android.R.attr.id;
 
 public class OverallActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -66,6 +70,18 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
 
         // prepare loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
+
+        // when item clicked open detail activity
+        itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // send uri of the clicked item with the intent
+                Intent intent = new Intent(OverallActivity.this, DetailActivity.class);
+                Uri currentItemUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+                intent.setData(currentItemUri);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
