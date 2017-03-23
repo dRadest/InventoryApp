@@ -1,7 +1,10 @@
 package com.example.android.inventoryapp;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -26,10 +29,13 @@ import java.io.IOException;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
-public class OverallActivity extends AppCompatActivity {
+public class OverallActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // Cursor to retrieve data from the table
-    private Cursor mCursor;
+    // identifier for the loader
+    private static final int ITEM_LOADER = 0;
+
+    // cursor adapter
+    private InventoryCursorAdapter mInventoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +52,20 @@ public class OverallActivity extends AppCompatActivity {
             }
         });
 
-    }
+        // find list view of items
+        ListView itemListView = (ListView) findViewById(R.id.list_view);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        displayDb();
+        // find and set empty view on list view
+        View emptyView = findViewById(R.id.empty_view);
+        itemListView.setEmptyView(emptyView);
+
+        // initialize cursor adapter
+        mInventoryAdapter = new InventoryCursorAdapter(this, null);
+        // set the adapter on list view
+        itemListView.setAdapter(mInventoryAdapter);
+
+        // prepare loader
+        getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
     @Override
@@ -102,7 +116,8 @@ public class OverallActivity extends AppCompatActivity {
         getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
     }
 
-    private void displayDb(){
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // which columns to use in a query (all)
         String[] projection = {
                 InventoryEntry._ID,
@@ -114,26 +129,23 @@ public class OverallActivity extends AppCompatActivity {
                 InventoryEntry.COLUMN_PICTURE
         };
 
-        // query the database and retrieve cursor
-        mCursor = getContentResolver().query(
+        return new CursorLoader(this,
                 InventoryEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
                 null);
-
-        // setup cursor adapter
-        InventoryCursorAdapter inCursorAdapter = new InventoryCursorAdapter(this, mCursor);
-
-        // find list view of items
-        ListView itemListView = (ListView) findViewById(R.id.list_view);
-
-        // find and set empty view on list view
-        View emptyView = findViewById(R.id.empty_view);
-        itemListView.setEmptyView(emptyView);
-
-        // set cursor adapter on list view
-        itemListView.setAdapter(inCursorAdapter);
     }
 
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // swap the new cursor in
+        mInventoryAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // no longer using old cursor
+        mInventoryAdapter.swapCursor(null);
+    }
 }
