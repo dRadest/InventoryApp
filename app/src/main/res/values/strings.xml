@@ -22,4 +22,11 @@
     <string name="order_item">Order items</string>
     <string name="delete_button">Delete</string>
     <string name="delete_item">Delete item</string>
+
+    <!--labels for dialog-->
+    <string name="dialog_sell_title">Sell item(s)</string>
+    <string name="dialog_sell_item_msg">Items sold...</string>
+    <string name="dialog_sell_item_hint">Enter amount of items sold</string>
+    <string name="dialog_discard_action">Discard</string>
+    <string name="dialog_submit_action">Submit</string>
 </resources>

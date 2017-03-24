@@ -1,7 +1,9 @@
 package com.example.android.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -10,10 +12,16 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.InventoryContract;
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
@@ -25,6 +33,9 @@ import static android.R.attr.name;
  */
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+
+    // context of this activity
+    private Context mContext = DetailActivity.this;
 
     // views we'll need to set text to
     private TextView mPriceView;
@@ -39,6 +50,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     // uri of the current item
     private Uri mCurrentItemUri;
+
+    // buttons to edit item
+    private Button mTrackButton;
+    private Button mOrderButton;
+    private Button mDeleteButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +75,36 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         // prepare loader
         getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
+
+        // find buttons
+        mTrackButton = (Button) findViewById(R.id.button_track);
+
+        // set OnItemClickListener to the track button
+        mTrackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle(R.string.dialog_sell_title);
+                // builder.setMessage(R.string.dialog_sell_item_msg);
+                LayoutInflater inflater = getLayoutInflater();
+                final View dialogLayout = inflater.inflate(R.layout.custom_alertdialog, null);
+                builder.setView(dialogLayout);
+                builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.show();
+            }
+        });
     }
 
     @Override
