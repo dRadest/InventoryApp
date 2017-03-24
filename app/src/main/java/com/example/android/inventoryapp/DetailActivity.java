@@ -1,6 +1,7 @@
 package com.example.android.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +58,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Button mOrderButton;
     private Button mDeleteButton;
 
+    // edit text view of the alert dialog
+    private EditText mEditText;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +83,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         // find buttons
         mTrackButton = (Button) findViewById(R.id.button_track);
+        mOrderButton = (Button) findViewById(R.id.button_order);
 
         // set OnItemClickListener to the track button
         mTrackButton.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +98,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                        mEditText = (EditText) dialogLayout.findViewById(R.id.cad_edittext);
+                        String enteredAmount = mEditText.getText().toString().trim();
+                        if (TextUtils.isEmpty(enteredAmount)){
+                            dialog.dismiss();
+                        } else {
+                            int enteredQuantity = Integer.parseInt(enteredAmount);
+                            updateQuantity(enteredQuantity);
+                            dialog.dismiss();
+                        }
+
                     }
                 });
                 builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
@@ -103,6 +118,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 });
 
                 builder.show();
+            }
+        });
+
+        mOrderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Order button clicked", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -175,6 +197,26 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mWebView.setText("");
         mEmailView.setText("");
         mImageView.setImageResource(R.drawable.no_img);
+
+    }
+
+    // helper method to update item quantity
+    private void updateQuantity(int enteredQuantity){
+        // first we query the db for current quantity
+        String[] projection = {InventoryEntry._ID,
+                                InventoryEntry.COLUMN_QUANTITY};
+        Cursor cursor = getContentResolver().query(mCurrentItemUri, projection, null, null, null);
+        cursor.moveToFirst();
+        int currentQuantity = cursor.getInt(cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY));
+        cursor.close();
+        int newQuantity = currentQuantity - enteredQuantity;
+        if (newQuantity >= 0){
+            ContentValues values = new ContentValues();
+            values.put(InventoryEntry.COLUMN_QUANTITY, newQuantity);
+            getContentResolver().update(mCurrentItemUri, values, null, null);
+        } else{
+            Toast.makeText(mContext, "Cannot sell more than you have", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }
