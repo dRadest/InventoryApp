@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -25,10 +24,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.inventoryapp.data.InventoryContract;
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
-import static android.R.attr.name;
+import static android.R.attr.dialogLayout;
 
 /**
  * Detail activity to view individual item details.
@@ -61,6 +59,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     // edit text view of the alert dialog
     private EditText mEditText;
 
+    // variable to check if we're selling or ordering the item
+    private boolean mOrderingItem = false;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,16 +86,17 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         // find buttons
         mTrackButton = (Button) findViewById(R.id.button_track);
         mOrderButton = (Button) findViewById(R.id.button_order);
+        mDeleteButton = (Button) findViewById(R.id.button_delete);
 
-        // set OnItemClickListener to the track button
+
+        // set OnItemClickListener to the buttons
         mTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mOrderingItem = false;
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle(R.string.dialog_sell_title);
-                // builder.setMessage(R.string.dialog_sell_item_msg);
-                LayoutInflater inflater = getLayoutInflater();
-                final View dialogLayout = inflater.inflate(R.layout.custom_alertdialog, null);
+                final View dialogLayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
                 builder.setView(dialogLayout);
                 builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
                     @Override
@@ -124,7 +127,41 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Order button clicked", Toast.LENGTH_SHORT).show();
+                mOrderingItem = true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle(R.string.dialog_order_title);
+                final View dialogLayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
+                builder.setView(dialogLayout);
+                builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mEditText = (EditText) dialogLayout.findViewById(R.id.cad_edittext);
+                        String enteredAmount = mEditText.getText().toString().trim();
+                        if (TextUtils.isEmpty(enteredAmount)){
+                            dialog.dismiss();
+                        } else {
+                            int enteredQuantity = Integer.parseInt(enteredAmount);
+                            updateQuantity(enteredQuantity);
+                            dialog.dismiss();
+                        }
+
+                    }
+                });
+                builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayDeleteAlertDialog();
             }
         });
     }
@@ -202,21 +239,65 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     // helper method to update item quantity
     private void updateQuantity(int enteredQuantity){
+        // variable used for calculating new quantity to update
+        int newQuantity;
         // first we query the db for current quantity
         String[] projection = {InventoryEntry._ID,
                                 InventoryEntry.COLUMN_QUANTITY};
         Cursor cursor = getContentResolver().query(mCurrentItemUri, projection, null, null, null);
+
+        // bail early if the returned cursosr is null
+        if (cursor == null){
+            return;
+        }
+        // move cursor to the first item (which should be the only one)
         cursor.moveToFirst();
         int currentQuantity = cursor.getInt(cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY));
         cursor.close();
-        int newQuantity = currentQuantity - enteredQuantity;
-        if (newQuantity >= 0){
-            ContentValues values = new ContentValues();
+        ContentValues values = new ContentValues();
+        // if we are ordering, quantity increases
+        if (mOrderingItem){
+            newQuantity = currentQuantity + enteredQuantity;
             values.put(InventoryEntry.COLUMN_QUANTITY, newQuantity);
-            getContentResolver().update(mCurrentItemUri, values, null, null);
-        } else{
-            Toast.makeText(mContext, "Cannot sell more than you have", Toast.LENGTH_SHORT).show();
+        } else{ // we're selling, quantity decreases
+            newQuantity = currentQuantity - enteredQuantity;
+            if (newQuantity >= 0){
+                values.put(InventoryEntry.COLUMN_QUANTITY, newQuantity);
+            } else{
+                Toast.makeText(mContext, "Cannot sell more than you have", Toast.LENGTH_SHORT).show();
+            }
         }
+        getContentResolver().update(mCurrentItemUri, values, null, null);
+    }
 
+    // helper function to display alert dialog when delete button is clicked
+    private void displayDeleteAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle(R.string.dialog_delete_title);
+                builder.setMessage(R.string.dialog_delete_msg);
+                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
+                        if (rowsDeleted > 0){
+                            Toast.makeText(mContext, "Item deleted from database", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else{
+                            dialog.dismiss();
+                        }
+
+                    }
+                });
+                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        dialog.dismiss();
+                    }
+                });
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

@@ -27,6 +27,11 @@
     <string name="dialog_sell_title">Sell item(s)</string>
     <string name="dialog_sell_item_msg">Items sold...</string>
     <string name="dialog_sell_item_hint">Enter amount of items sold</string>
+    <string name="dialog_order_title">Order item(s)</string>
+    <string name="dialog_order_item_msg">Items to order...</string>
+    <string name="dialog_order_item_hint">Enter amount of items to order</string>
     <string name="dialog_discard_action">Discard</string>
     <string name="dialog_submit_action">Submit</string>
+    <string name="dialog_delete_title">Delete item</string>
+    <string name="dialog_delete_msg">Delete this item from database?</string>
 </resources>
