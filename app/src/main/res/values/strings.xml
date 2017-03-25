@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Inventory App</string>
     <string name="detail_activity">Item details</string>
+    <string name="add_item_activity">Add item</string>
 
     <!--labels for the empty view-->
     <string name="empty_view_title_text">No items to display</string>

@@ -51,8 +51,8 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent detailActivityIntent = new Intent(OverallActivity.this, DetailActivity.class);
-                startActivity(detailActivityIntent);
+                Intent addItemIntent = new Intent(OverallActivity.this, AddItemActivity.class);
+                startActivity(addItemIntent);
             }
         });
 

@@ -19,6 +19,10 @@
             android:label="@string/detail_activity"
             android:parentActivityName=".OverallActivity">
         </activity>
+        <activity android:name=".AddItemActivity"
+            android:label="@string/add_item_activity"
+            android:parentActivityName=".OverallActivity">
+        </activity>
         <provider
             android:name=".data.ItemProvider"
             android:authorities="com.example.android.inventoryapp"
