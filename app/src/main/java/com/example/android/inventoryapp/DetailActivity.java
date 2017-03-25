@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
-
-import static android.R.attr.dialogLayout;
 
 /**
  * Detail activity to view individual item details.
@@ -60,7 +57,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private EditText mEditText;
 
     // variable to check if we're selling or ordering the item
-    private boolean mOrderingItem = false;
+    private boolean mSellingItem = false;
 
 
     @Override
@@ -93,68 +90,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOrderingItem = false;
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle(R.string.dialog_sell_title);
-                final View dialogLayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
-                builder.setView(dialogLayout);
-                builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mEditText = (EditText) dialogLayout.findViewById(R.id.cad_edittext);
-                        String enteredAmount = mEditText.getText().toString().trim();
-                        if (TextUtils.isEmpty(enteredAmount)){
-                            dialog.dismiss();
-                        } else {
-                            int enteredQuantity = Integer.parseInt(enteredAmount);
-                            updateQuantity(enteredQuantity);
-                            dialog.dismiss();
-                        }
-
-                    }
-                });
-                builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.show();
+                mSellingItem = true;
+                displayUpdateAlertDialog(mSellingItem);
             }
         });
 
         mOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOrderingItem = true;
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle(R.string.dialog_order_title);
-                final View dialogLayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
-                builder.setView(dialogLayout);
-                builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mEditText = (EditText) dialogLayout.findViewById(R.id.cad_edittext);
-                        String enteredAmount = mEditText.getText().toString().trim();
-                        if (TextUtils.isEmpty(enteredAmount)){
-                            dialog.dismiss();
-                        } else {
-                            int enteredQuantity = Integer.parseInt(enteredAmount);
-                            updateQuantity(enteredQuantity);
-                            dialog.dismiss();
-                        }
-
-                    }
-                });
-                builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.show();
+                mSellingItem = false;
+                displayUpdateAlertDialog(mSellingItem);
             }
         });
 
@@ -256,7 +201,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         cursor.close();
         ContentValues values = new ContentValues();
         // if we are ordering, quantity increases
-        if (mOrderingItem){
+        if (!mSellingItem){
             newQuantity = currentQuantity + enteredQuantity;
             values.put(InventoryEntry.COLUMN_QUANTITY, newQuantity);
         } else{ // we're selling, quantity decreases
@@ -270,6 +215,43 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         getContentResolver().update(mCurrentItemUri, values, null, null);
     }
 
+    // helper function to display alert dialog when updating the database
+    private void displayUpdateAlertDialog(boolean sell){
+        final View dialogLayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
+        mEditText = (EditText) dialogLayout.findViewById(R.id.cad_edittext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        // set title and hint if we're selling or ordering
+        if (sell){
+            builder.setTitle(R.string.dialog_sell_title);
+            mEditText.setHint(R.string.dialog_sell_item_hint);
+        } else {
+            builder.setTitle(R.string.dialog_order_title);
+            mEditText.setHint(R.string.dialog_order_item_hint);
+        }
+        builder.setView(dialogLayout);
+        builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String enteredAmount = mEditText.getText().toString().trim();
+                if (TextUtils.isEmpty(enteredAmount)){
+                    dialog.dismiss();
+                } else {
+                    int enteredQuantity = Integer.parseInt(enteredAmount);
+                    updateQuantity(enteredQuantity);
+                    dialog.dismiss();
+                }
+
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
     // helper function to display alert dialog when delete button is clicked
     private void displayDeleteAlertDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
