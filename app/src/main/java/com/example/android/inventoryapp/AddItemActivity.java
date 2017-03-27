@@ -3,6 +3,7 @@ package com.example.android.inventoryapp;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -18,6 +19,9 @@ import android.widget.Toast;
 import com.example.android.inventoryapp.data.InventoryContract;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Class for activity to add new item to the database
@@ -32,14 +36,15 @@ public class AddItemActivity extends AppCompatActivity {
     private EditText mWebEditText;
     private EditText mEmailEditText;
     private TextView mPictureTextView;
+    private ImageView mPictureImageView;
 
     // request code for intent to take a picture
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    // variable for byte array
-    private byte[] mByteArray = {};
 
-
+    // bitmap variable for captured image
+    private Bitmap mBitmapImage;
+    
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,7 @@ public class AddItemActivity extends AppCompatActivity {
         mWebEditText = (EditText) findViewById(R.id.web_edit_text);
         mEmailEditText = (EditText) findViewById(R.id.email_edit_text);
         mPictureTextView = (TextView) findViewById(R.id.add_picture_textview);
+        mPictureImageView = (ImageView) findViewById(R.id.preview_imageview);
 
         mPictureTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +65,6 @@ public class AddItemActivity extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
-
 
     }
 
@@ -95,6 +100,15 @@ public class AddItemActivity extends AppCompatActivity {
         String web = mWebEditText.getText().toString().trim();
         String email = mEmailEditText.getText().toString().trim();
 
+        // convert bitmap to byte array
+        byte[] byteArray = {};
+        if (mBitmapImage != null){
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            mBitmapImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byteArray = stream.toByteArray();
+        }
+
+
         // create content values
         ContentValues values = new ContentValues();
         values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, priceInt);
@@ -102,7 +116,7 @@ public class AddItemActivity extends AppCompatActivity {
         values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_NAME, name);
         values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_WEB, web);
         values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_EMAIL, email);
-        values.put(InventoryContract.InventoryEntry.COLUMN_PICTURE, mByteArray);
+        values.put(InventoryContract.InventoryEntry.COLUMN_PICTURE, byteArray);
 
         // insert it into items table
         getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
@@ -115,6 +129,9 @@ public class AddItemActivity extends AppCompatActivity {
         mNameEditText.setText("");
         mWebEditText.setText("");
         mEmailEditText.setText("");
+        mPictureImageView.setImageResource(R.drawable.no_img);
+        mBitmapImage = null;
+
     }
 
     // testing capturing an image
@@ -129,14 +146,9 @@ public class AddItemActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // convert bitmap to byte array
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            mByteArray = stream.toByteArray();
+            mBitmapImage = (Bitmap) extras.get("data");
             // set image on test image view
-            ImageView testImageView = (ImageView) findViewById(R.id.test_imageview);
-            testImageView.setImageBitmap(imageBitmap);
+            mPictureImageView.setImageBitmap(mBitmapImage);
         }
     }
 }
