@@ -27,6 +27,8 @@
             android:name=".data.ItemProvider"
             android:authorities="com.example.android.inventoryapp"
             android:exported="false" />
+        <uses-feature android:name="android.hardware.camera"
+            android:required="true" />
     </application>
 
 </manifest>

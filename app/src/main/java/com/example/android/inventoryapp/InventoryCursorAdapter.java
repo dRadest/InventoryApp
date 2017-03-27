@@ -74,7 +74,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
         int itemQuantity = cursor.getInt(quantityColumnIndex);
         // retrieving an image from database
         byte[] imageByteArray = cursor.getBlob(imageColumnIndex);
-        if (imageByteArray != null){
+        if (imageByteArray != null && imageByteArray.length > 2){
             Bitmap itemImage = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
             itemImageView.setImageBitmap(itemImage);
         }
