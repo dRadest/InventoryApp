@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  * Detail activity to view individual item details.
  */
@@ -151,22 +154,29 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             int imageColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PICTURE);
 
             // Extract out the value from the Cursor for the given column index
-            int price = cursor.getInt(priceColumnIndex);
+            double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
             String name = cursor.getString(nameColumnIndex);
             String web = cursor.getString(webColumnIndex);
             String email = cursor.getString(emailColumnIndex);
             byte[] imageByteArray = cursor.getBlob(imageColumnIndex);
-            Bitmap itemImage = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+            if (imageByteArray.length > 1){
+                Bitmap itemImage = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+                mImageView.setImageBitmap(itemImage);
+            }
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.HALF_EVEN);
+            String fItemPrice = df.format(price/100);
 
 
             // Update the views on the screen with the values from the database
-            mPriceView.setText(Integer.toString(price));
+            mPriceView.setText(fItemPrice);
             mQuantityView.setText(Integer.toString(quantity));
             mNameView.setText(name);
             mWebView.setText(web);
             mEmailView.setText(email);
-            mImageView.setImageBitmap(itemImage);
+
         }
     }
 

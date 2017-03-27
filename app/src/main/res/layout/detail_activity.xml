@@ -21,7 +21,7 @@
                 android:layout_height="100dp"
                 android:layout_marginRight="16dp"
                 android:scaleType="centerCrop"
-                android:background="#dcedc8"
+                android:src="@drawable/no_img"
                  />
 
             <LinearLayout
