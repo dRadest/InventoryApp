@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  * {@link InventoryCursorAdapter} is an adapter for a list or grid view
  * that uses a {@link Cursor} of inventory data as its data source. This adapter knows
@@ -70,7 +73,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
         // Read the item attributes from the Cursor for the current pet
         String supName = cursor.getString(nameColumnIndex);
-        int itemPrice = cursor.getInt(priceColumnIndex);
+        double itemPrice = cursor.getDouble(priceColumnIndex);
         int itemQuantity = cursor.getInt(quantityColumnIndex);
         // retrieving an image from database
         byte[] imageByteArray = cursor.getBlob(imageColumnIndex);
@@ -79,9 +82,12 @@ public class InventoryCursorAdapter extends CursorAdapter {
             itemImageView.setImageBitmap(itemImage);
         }
 
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_EVEN);
+        String fItemPrice = df.format(itemPrice/100);
 
         // String for summary text view
-        String summaryString = itemQuantity + " for " + itemPrice + " $ each";
+        String summaryString = itemQuantity + " for " + fItemPrice + " $ each";
 
         // Update the TextViews with the attributes for the current item
         nameTextView.setText(supName);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,8 @@ import com.example.android.inventoryapp.data.InventoryContract;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -28,6 +31,8 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class AddItemActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = AddItemActivity.class.getName();
 
     // View we'll be using to enter item into database
     private EditText mPriceEditText;
@@ -90,10 +95,12 @@ public class AddItemActivity extends AppCompatActivity {
 
     // helper method to save item
     private void saveItem(){
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_EVEN);
         // get values from views
-        String priceString = mPriceEditText.getText().toString().trim();
-        double price = Double.parseDouble(priceString);
-        int priceInt = (int) price * 100;
+        double priceDouble = Double.parseDouble(mPriceEditText.getText().toString().trim());
+        priceDouble = Double.parseDouble(df.format(priceDouble));
+        int priceInt = (int) (priceDouble * 100);
 
         int quantity = Integer.parseInt(mQuantityEditText.getText().toString().trim());
         String name = mNameEditText.getText().toString().trim();
