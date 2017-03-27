@@ -13,6 +13,8 @@
             android:layout_height="wrap_content"
             android:text="Price"/>
         <EditText
+            android:inputType="numberDecimal"
+            android:id="@+id/price_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter item's price"/>
@@ -21,6 +23,8 @@
             android:layout_height="wrap_content"
             android:text="Quantity"/>
         <EditText
+            android:inputType="number"
+            android:id="@+id/quantity_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter item's quantity"/>
@@ -29,6 +33,8 @@
             android:layout_height="wrap_content"
             android:text="Supplier name"/>
         <EditText
+            android:inputType="textCapWords"
+            android:id="@+id/name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter name of the supplier"/>
@@ -37,6 +43,8 @@
             android:layout_height="wrap_content"
             android:text="Supplier web"/>
         <EditText
+            android:inputType="textWebEditText"
+            android:id="@+id/web_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter supplier's web address"/>
@@ -45,10 +53,13 @@
             android:layout_height="wrap_content"
             android:text="Supplier email"/>
         <EditText
+            android:inputType="textEmailAddress"
+            android:id="@+id/email_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter supplier's email address"/>
         <TextView
+            android:id="@+id/add_picture_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tap to select picture"/>
