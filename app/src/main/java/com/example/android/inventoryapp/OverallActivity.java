@@ -102,6 +102,7 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
                 return true;
             // Respond to a click on the "Clear all" menu option
             case R.id.clear_overall_menu_item:
+                deleteAllItems();
                 return true;
             // Respond to a click on the "Change view" menu option
             case R.id.change_view:
@@ -163,5 +164,11 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
     public void onLoaderReset(Loader<Cursor> loader) {
         // no longer using old cursor
         mInventoryAdapter.swapCursor(null);
+    }
+
+    // helper method to delete all items in the databse
+    private void deleteAllItems(){
+        int rowsDeleted = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
+        Toast.makeText(getApplicationContext(), "Items deleted: " + rowsDeleted, Toast.LENGTH_SHORT).show();
     }
 }
