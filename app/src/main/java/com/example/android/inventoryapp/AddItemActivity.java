@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -98,12 +99,27 @@ public class AddItemActivity extends AppCompatActivity {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.HALF_EVEN);
         // get values from views
-        double priceDouble = Double.parseDouble(mPriceEditText.getText().toString().trim());
+        String priceString = mPriceEditText.getText().toString().trim();
+        // if there's no price entered, bail early
+        if (TextUtils.isEmpty(priceString)){
+            return;
+        }
+        double priceDouble = Double.parseDouble(priceString);
         priceDouble = Double.parseDouble(df.format(priceDouble));
         int priceInt = (int) (priceDouble * 100);
 
-        int quantity = Integer.parseInt(mQuantityEditText.getText().toString().trim());
+        int quantity = 0;
+        String quantityString = mQuantityEditText.getText().toString().trim();
+        // if there's no quantity entered, it remains 0
+        if (!TextUtils.isEmpty(quantityString)){
+            quantity = Integer.parseInt(quantityString);
+        }
+
         String name = mNameEditText.getText().toString().trim();
+        // if there's no name entered, bail early
+        if (TextUtils.isEmpty(name)){
+            return;
+        }
         String web = mWebEditText.getText().toString().trim();
         String email = mEmailEditText.getText().toString().trim();
 
