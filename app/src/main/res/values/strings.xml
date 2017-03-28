@@ -35,4 +35,8 @@
     <string name="dialog_submit_action">Submit</string>
     <string name="dialog_delete_title">Delete item</string>
     <string name="dialog_delete_msg">Delete this item from database?</string>
+
+    <!--labels for web and email when not provided-->
+    <string name="web_not_provided">Web address not provided</string>
+    <string name="email_not_provided">Email Address not provided</string>
 </resources>

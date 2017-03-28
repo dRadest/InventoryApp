@@ -1,6 +1,7 @@
 package com.example.android.inventoryapp;
 
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -27,6 +28,9 @@ import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+
+import static android.R.attr.name;
+import static android.R.id.message;
 
 /**
  * Detail activity to view individual item details.
@@ -112,6 +116,41 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 displayDeleteAlertDialog();
             }
         });
+
+        // set click listeners on web and email views
+        mWebView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String web = mWebView.getText().toString().trim();
+                if (web.equals(getString(R.string.web_not_provided))){
+                    Toast.makeText(getApplicationContext(), "No URL to open", Toast.LENGTH_SHORT).show();
+                } else {
+                    // preform a web search for given web address
+                    Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                    intent.putExtra(SearchManager.QUERY, web);
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+        mEmailView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = mEmailView.getText().toString().trim();
+                if (email.equals(getString(R.string.email_not_provided))){
+                    Toast.makeText(getApplicationContext(), "No email address to send to", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Send the email message to provided email address
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:" + email)); // only email apps should handle this
+
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -171,11 +210,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
 
             // Update the views on the screen with the values from the database
-            mPriceView.setText(fItemPrice);
+            mPriceView.setText(fItemPrice + " $");
             mQuantityView.setText(Integer.toString(quantity));
             mNameView.setText(name);
-            mWebView.setText(web);
-            mEmailView.setText(email);
+            // if there's no web address provided, set the predefined text
+            if (TextUtils.isEmpty(web)){
+                mWebView.setText(getString(R.string.web_not_provided));
+            } else{
+                mWebView.setText(web);
+            }
+            // if there's no email address provided, set the predefined text
+            if (TextUtils.isEmpty(email)){
+                mEmailView.setText(getString(R.string.email_not_provided));
+            } else{
+                mEmailView.setText(email);
+            }
 
         }
     }
