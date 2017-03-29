@@ -9,65 +9,72 @@
         android:padding="16dp">
 
         <TextView
+            style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Price"/>
+            android:text="@string/price_title"/>
         <EditText
             android:inputType="numberDecimal"
             android:id="@+id/price_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter item's price"/>
+            android:hint="@string/enter_price"/>
         <TextView
+            style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Quantity"/>
+            android:text="@string/quantity_title"/>
         <EditText
             android:inputType="number"
             android:id="@+id/quantity_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter item's quantity"/>
+            android:hint="@string/enter_quantity"/>
         <TextView
+            style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Supplier name"/>
+            android:text="@string/supplier_name"/>
         <EditText
             android:inputType="textCapWords"
             android:id="@+id/name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter name of the supplier"/>
+            android:hint="@string/enter_supplier_name"/>
         <TextView
+            style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Supplier web"/>
+            android:text="@string/supplier_web"/>
         <EditText
             android:inputType="textWebEditText"
             android:id="@+id/web_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter supplier's web address"/>
+            android:hint="@string/enter_supplier_web"/>
         <TextView
+            style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Supplier email"/>
+            android:text="@string/supplier_email"/>
         <EditText
             android:inputType="textEmailAddress"
             android:id="@+id/email_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter supplier's email address"/>
+            android:hint="@string/enter_supplier_email"/>
         <TextView
+            style="@style/TextboxDetail"
             android:id="@+id/take_picture_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tap to take a picture"/>
+            android:text="@string/tap_take_photo"/>
         <TextView
+            style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/add_picture_textview"
-            android:text="Tap to add a picture"/>
+            android:text="@string/tap_select_photo"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -39,4 +39,16 @@
     <!--labels for web and email when not provided-->
     <string name="web_not_provided">Web address not provided</string>
     <string name="email_not_provided">Email Address not provided</string>
+
+    <!--labels for views in add item activity-->
+    <string name="enter_price">Enter item\'s price</string>
+    <string name="enter_quantity">Enter item\'s quantity</string>
+    <string name="supplier_name">Supplier\'s Name</string>
+    <string name="enter_supplier_name">Enter supplier\'s name</string>
+    <string name="supplier_web">Supplier\'s Web</string>
+    <string name="enter_supplier_web">Enter supplier\'s web address</string>
+    <string name="supplier_email">Supplier\'s Email</string>
+    <string name="enter_supplier_email">Enter supplier\'s email address</string>
+    <string name="tap_take_photo">Tap to take a photo</string>
+    <string name="tap_select_photo">Tap to select a photo</string>
 </resources>
