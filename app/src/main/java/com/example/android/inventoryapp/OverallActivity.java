@@ -124,9 +124,9 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
         ContentValues values = new ContentValues();
         values.put(InventoryEntry.COLUMN_PRICE, 55);
         values.put(InventoryEntry.COLUMN_QUANTITY, 20);
-        values.put(InventoryEntry.COLUMN_SUPPLIER_NAME, "Guma proizvod");
-        values.put(InventoryEntry.COLUMN_SUPPLIER_WEB, "www.google.com");
-        values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, "mail@me.com");
+        values.put(InventoryEntry.COLUMN_SUPPLIER_NAME, getString(R.string.dummy_supplier_name));
+        values.put(InventoryEntry.COLUMN_SUPPLIER_WEB, getString(R.string.dummy_supplier_web));
+        values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, getString(R.string.dummy_supplier_email));
         values.put(InventoryEntry.COLUMN_PICTURE, byteArray);
 
         // insert it into items table

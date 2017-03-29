@@ -51,4 +51,9 @@
     <string name="enter_supplier_email">Enter supplier\'s email address</string>
     <string name="tap_take_photo">Tap to take a photo</string>
     <string name="tap_select_photo">Tap to select a photo</string>
+
+    <!--labels for dummy data-->
+    <string name="dummy_supplier_name">Hammer!</string>
+    <string name="dummy_supplier_web">hammermegently.com</string>
+    <string name="dummy_supplier_email">hammer@me.com</string>
 </resources>
