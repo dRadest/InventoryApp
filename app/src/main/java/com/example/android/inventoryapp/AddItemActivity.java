@@ -1,9 +1,10 @@
 package com.example.android.inventoryapp;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -25,8 +26,6 @@ import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-import static android.app.Activity.RESULT_OK;
-
 /**
  * Class for activity to add new item to the database
  */
@@ -41,11 +40,18 @@ public class AddItemActivity extends AppCompatActivity {
     private EditText mNameEditText;
     private EditText mWebEditText;
     private EditText mEmailEditText;
-    private TextView mPictureTextView;
+    private TextView mTakePictureTextView;
+    private TextView mAddPictureTextView;
     private ImageView mPictureImageView;
 
     // request code for intent to take a picture
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    // request code for intent to select a picture
+    static final int REQUEST_IMAGE_GET = 2;
+
+    // maximum image size
+    static final float MAX_IMAGE_SIZE = 300;
 
 
     // bitmap variable for captured image
@@ -62,13 +68,23 @@ public class AddItemActivity extends AppCompatActivity {
         mNameEditText = (EditText) findViewById(R.id.name_edit_text);
         mWebEditText = (EditText) findViewById(R.id.web_edit_text);
         mEmailEditText = (EditText) findViewById(R.id.email_edit_text);
-        mPictureTextView = (TextView) findViewById(R.id.add_picture_textview);
+        mTakePictureTextView = (TextView) findViewById(R.id.take_picture_textview);
+        mAddPictureTextView = (TextView) findViewById(R.id.add_picture_textview);
         mPictureImageView = (ImageView) findViewById(R.id.preview_imageview);
 
-        mPictureTextView.setOnClickListener(new View.OnClickListener() {
+        // take a picture when this text view is touched
+        mTakePictureTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
+            }
+        });
+
+        // select a picture from storage when this text view is touched
+        mAddPictureTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchSelectPictureIntent();
             }
         });
 
@@ -157,12 +173,22 @@ public class AddItemActivity extends AppCompatActivity {
 
     }
 
-    // testing capturing an image
+    // dispatch intent to take a photo
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
+    }
+
+    // dispatch intent to select a photo from storage
+    private void dispatchSelectPictureIntent(){
+        Intent selectPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        selectPictureIntent.setType("image/*");
+        if (selectPictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(selectPictureIntent, REQUEST_IMAGE_GET);
+        }
+
     }
 
     @Override
@@ -173,5 +199,30 @@ public class AddItemActivity extends AppCompatActivity {
             // set image on test image view
             mPictureImageView.setImageBitmap(mBitmapImage);
         }
+        if (requestCode == REQUEST_IMAGE_GET && resultCode == RESULT_OK) {
+            Uri fullPhotoUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), fullPhotoUri);
+                Bitmap scaledBitmap = scaleDown(bitmap, MAX_IMAGE_SIZE, true);
+                mBitmapImage = scaledBitmap;
+                mPictureImageView.setImageBitmap(mBitmapImage);
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "I didn't work", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // helper method to scale down bitmap
+    private static Bitmap scaleDown(Bitmap realImage, float maxImageSize,
+                                    boolean filter) {
+        float ratio = Math.min(
+                (float) maxImageSize / realImage.getWidth(),
+                (float) maxImageSize / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                height, filter);
+        return newBitmap;
     }
 }

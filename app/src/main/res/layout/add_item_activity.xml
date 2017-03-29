@@ -59,10 +59,15 @@
             android:layout_height="wrap_content"
             android:hint="Enter supplier's email address"/>
         <TextView
-            android:id="@+id/add_picture_textview"
+            android:id="@+id/take_picture_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tap to select picture"/>
+            android:text="Tap to take a picture"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_picture_textview"
+            android:text="Tap to add a picture"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
