@@ -7,39 +7,50 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.android.inventoryapp.data.InventoryContract;
-import com.example.android.inventoryapp.data.InventoryDbHelper;
-
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
-import static android.R.attr.id;
+import static android.view.View.GONE;
 
 public class OverallActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final String LOG_TAG = "OverallActivity";
 
     // identifier for the loader
     private static final int ITEM_LOADER = 0;
 
-    // cursor adapter
-    private InventoryCursorAdapter mInventoryAdapter;
+    // cursor adapters
+    private InventoryCursorAdapter listInventoryAdapter;
+    private InventoryCursorAdapter gridInventoryAdapter;
+
+    // variable for the grid view
+    private GridView mGridView;
+
+    // variable for the list view
+    private ListView mListView;
+
+    // variable indicating if grid view is visible
+    public boolean mGridVisible;
+
+    // view stubs for list and grid views
+    private ViewStub mListViewStub, mGridViewStub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,32 +67,77 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
+        // find view stubs
+        mListViewStub = (ViewStub) findViewById(R.id.list_viewstub);
+        mGridViewStub = (ViewStub) findViewById(R.id.grid_viewstub);
+        // inflate view stubs
+        mListViewStub.inflate();
+        mGridViewStub.inflate();
+
         // find list view of items
-        ListView itemListView = (ListView) findViewById(R.id.list_view);
+        mListView = (ListView) findViewById(R.id.list_view);
+        mGridView = (GridView) findViewById(R.id.grid_view);
 
         // find and set empty view on list view
         View emptyView = findViewById(R.id.empty_view);
-        itemListView.setEmptyView(emptyView);
+        mListView.setEmptyView(emptyView);
+        mGridView.setEmptyView(emptyView);
 
-        // initialize cursor adapter
-        mInventoryAdapter = new InventoryCursorAdapter(this, null);
-        // set the adapter on list view
-        itemListView.setAdapter(mInventoryAdapter);
+        // initialize the adapters
+        listInventoryAdapter = new InventoryCursorAdapter(this, null, false);
+        gridInventoryAdapter = new InventoryCursorAdapter(this, null, true);
 
         // prepare loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
 
-        // when item clicked open detail activity
-        itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // send uri of the clicked item with the intent
-                Intent intent = new Intent(OverallActivity.this, DetailActivity.class);
-                Uri currentItemUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
-                intent.setData(currentItemUri);
-                startActivity(intent);
-            }
-        });
+    }
+
+    // helper method to change the views
+    private void changeViews(){
+        if (mGridVisible){
+            mGridViewStub.setVisibility(View.VISIBLE);
+            mListViewStub.setVisibility(View.GONE);
+        } else{
+            mGridViewStub.setVisibility(View.GONE);
+            mListViewStub.setVisibility(View.VISIBLE);
+        }
+        setAdapter();
+    }
+
+    // helper method to set the adapter
+    private void setAdapter(){
+        if (mGridVisible){
+            mGridView.setAdapter(gridInventoryAdapter);
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // send uri of the clicked item with the intent
+                    Intent intent = new Intent(OverallActivity.this, DetailActivity.class);
+                    Uri currentItemUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+                    intent.setData(currentItemUri);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            mListView.setAdapter(listInventoryAdapter);
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // send uri of the clicked item with the intent
+                    Intent intent = new Intent(OverallActivity.this, DetailActivity.class);
+                    Uri currentItemUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+                    intent.setData(currentItemUri);
+                    startActivity(intent);
+                }
+            });
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        changeViews();
     }
 
     @Override
@@ -106,14 +162,15 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
                 return true;
             // Respond to a click on the "Change view" menu option
             case R.id.change_view:
+                mGridVisible = !mGridVisible;
+                changeViews();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    // helper method to insert dummy
+    // helper method to insert dummy item
     public void insertDummyItem(){
-
         // convert bitmap to byte array
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.hammer);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -157,13 +214,16 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // swap the new cursor in
-        mInventoryAdapter.swapCursor(data);
+        gridInventoryAdapter.swapCursor(data);
+        listInventoryAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // no longer using old cursor
-        mInventoryAdapter.swapCursor(null);
+        gridInventoryAdapter.swapCursor(null);
+        listInventoryAdapter.swapCursor(null);
+
     }
 
     // helper method to delete all items in the databse

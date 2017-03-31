@@ -6,11 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.inventoryapp.OverallActivity">
 
-    <ListView
+
+    <ViewStub android:id="@+id/list_viewstub"
+        android:inflatedId="@+id/showlayout"
+        android:layout="@layout/list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/list_view">
-    </ListView>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"/>
+
+    <ViewStub android:id="@+id/grid_viewstub"
+        android:inflatedId="@+id/showlayout"
+        android:layout="@layout/grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"/>
 
     <!-- Empty view for the list -->
     <RelativeLayout
