@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,10 @@ import static android.view.View.GONE;
 public class OverallActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = "OverallActivity";
+    // name of the preference that stores boolean mGridVisible
+    private static final String VIEW_PREF_NAME = "ViewPrefs";
+    // preference key
+    private static final String VIEW_PREF_KEY = "gridVisible";
 
     // identifier for the loader
     private static final int ITEM_LOADER = 0;
@@ -90,6 +95,9 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
         // prepare loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
 
+        // Restore preferences
+        SharedPreferences settings = getSharedPreferences(VIEW_PREF_NAME, 0);
+        mGridVisible = settings.getBoolean(VIEW_PREF_KEY, false);
     }
 
     // helper method to change the views
@@ -138,6 +146,20 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
     protected void onStart() {
         super.onStart();
         changeViews();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        SharedPreferences settings = getSharedPreferences(VIEW_PREF_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(VIEW_PREF_KEY, mGridVisible);
+
+        // Commit the edits!
+        editor.apply();
+
     }
 
     @Override
