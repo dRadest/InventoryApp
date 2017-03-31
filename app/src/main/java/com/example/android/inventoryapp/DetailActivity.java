@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -149,6 +150,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                         startActivity(intent);
                     }
                 }
+            }
+        });
+        mNameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayEditNameAlertDialog();
             }
         });
     }
@@ -340,5 +347,48 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+    // helper function to display alert dialog when updating the database
+    private void displayEditNameAlertDialog(){
+        final View dialogLayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
+        mEditText = (EditText) dialogLayout.findViewById(R.id.cad_edittext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        // set title and hint
+        builder.setTitle(R.string.dialog_edit_title);
+        mEditText.setHint(R.string.dialog_edit_hint);
+
+        // change input type of edit text
+        mEditText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+
+        builder.setView(dialogLayout);
+        builder.setPositiveButton(R.string.dialog_submit_action, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String enteredName = mEditText.getText().toString().trim();
+                if (TextUtils.isEmpty(enteredName)){
+                    dialog.dismiss();
+                } else {
+                    updateName(enteredName);
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_discard_action, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+    // helper method to update supplier's name
+    private void updateName(String name){
+        ContentValues values = new ContentValues();
+        values.put(InventoryEntry.COLUMN_SUPPLIER_NAME, name);
+        int updatedRows = getContentResolver().update(mCurrentItemUri, values, null, null);
+        if (updatedRows < 0){
+            Toast.makeText(mContext, "Error changing name", Toast.LENGTH_SHORT).show();
+        }
     }
 }
