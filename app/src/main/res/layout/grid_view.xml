@@ -12,5 +12,7 @@
         android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"
         android:gravity="center"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
         />
 </FrameLayout>
