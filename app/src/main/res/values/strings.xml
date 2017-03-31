@@ -35,6 +35,8 @@
     <string name="dialog_submit_action">Submit</string>
     <string name="dialog_delete_title">Delete item</string>
     <string name="dialog_delete_msg">Delete this item from database?</string>
+    <string name="dialog_clear_title">Clear database</string>
+    <string name="dialog_clear_msg">Clear all items from database?</string>
 
     <!--labels for web and email when not provided-->
     <string name="web_not_provided">Web address not provided</string>

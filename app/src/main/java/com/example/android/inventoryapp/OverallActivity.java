@@ -3,7 +3,9 @@ package com.example.android.inventoryapp;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -12,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +36,8 @@ import static android.view.View.GONE;
 public class OverallActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = "OverallActivity";
+    // context of this activity
+    private Context mContext = OverallActivity.this;
     // name of the preference that stores boolean mGridVisible
     private static final String VIEW_PREF_NAME = "ViewPrefs";
     // preference key
@@ -180,7 +185,7 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
                 return true;
             // Respond to a click on the "Clear all" menu option
             case R.id.clear_overall_menu_item:
-                deleteAllItems();
+                displayClearAlertDialog();
                 return true;
             // Respond to a click on the "Change view" menu option
             case R.id.change_view:
@@ -247,10 +252,35 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
         listInventoryAdapter.swapCursor(null);
 
     }
+    
+    // helper method to display alert dialog when clear all is chosen
+    private void displayClearAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(R.string.dialog_clear_title);
+        builder.setMessage(R.string.dialog_clear_msg);
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // continue with delete
+                int rowsDeleted = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
+                if (rowsDeleted > 0){
+                    Toast.makeText(getApplicationContext(), "Items deleted: " + rowsDeleted, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else{
+                    dialog.dismiss();
+                }
 
-    // helper method to delete all items in the databse
-    private void deleteAllItems(){
-        int rowsDeleted = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
-        Toast.makeText(getApplicationContext(), "Items deleted: " + rowsDeleted, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // do nothing
+                dialog.dismiss();
+            }
+        });
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
