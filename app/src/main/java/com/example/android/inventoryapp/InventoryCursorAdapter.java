@@ -1,22 +1,30 @@
 package com.example.android.inventoryapp;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.InventoryContract.InventoryEntry;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+
+import static android.R.attr.id;
 
 /**
  * {@link InventoryCursorAdapter} is an adapter for a list or grid view
@@ -29,6 +37,9 @@ public class InventoryCursorAdapter extends CursorAdapter {
     // varianle to indicate whether we're displaying grid or list
     private boolean gridDisplayed;
 
+    // variable to hold context
+    private Context mContext;
+
     /**
      * Constructs a new {@link InventoryCursorAdapter}.
      *
@@ -38,6 +49,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
     public InventoryCursorAdapter(Context context, Cursor c, boolean displayed) {
         super(context, c, 0 /* flags */);
         gridDisplayed = displayed;
+        this.mContext = context;
     }
 
     /**
@@ -103,7 +115,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
             // Read the item attributes from the Cursor for the current pet
             String supName = cursor.getString(nameColumnIndex);
             double itemPrice = cursor.getDouble(priceColumnIndex);
-            int itemQuantity = cursor.getInt(quantityColumnIndex);
+            final int itemQuantity = cursor.getInt(quantityColumnIndex);
             // retrieving an image from database
             byte[] imageByteArray = cursor.getBlob(imageColumnIndex);
             if (imageByteArray != null && imageByteArray.length > 2) {
@@ -121,6 +133,29 @@ public class InventoryCursorAdapter extends CursorAdapter {
             // Update the TextViews with the attributes for the current item
             nameTextView.setText(supName);
             summaryTextView.setText(summaryString);
+
+            // get id from cursor
+            int idColumnIndex = cursor.getColumnIndex(InventoryEntry._ID);
+            final int currentItemID = cursor.getInt(idColumnIndex);
+
+
+            // trying to make sell icon work
+            ImageView sellIcon = (ImageView) view.findViewById(R.id.list_item_sell_icon);
+            sellIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int decQuantity = itemQuantity;
+                    if (decQuantity-1 < 0){
+                        Toast.makeText(mContext, "Quantity cannot be negative", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.i("InventoryCursorAdapter", "decremented quantity: " + decQuantity--);
+                        ContentValues values = new ContentValues();
+                        values.put(InventoryEntry.COLUMN_QUANTITY, decQuantity--);
+                        Uri currentItemUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, currentItemID);
+                        mContext.getContentResolver().update(currentItemUri, values, null, null);
+                    }
+                }
+            });
         }
 
     }
