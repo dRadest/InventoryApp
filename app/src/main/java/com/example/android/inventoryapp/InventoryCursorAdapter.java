@@ -139,18 +139,18 @@ public class InventoryCursorAdapter extends CursorAdapter {
             final int currentItemID = cursor.getInt(idColumnIndex);
 
 
-            // trying to make sell icon work
+            // logic for sell icon
             ImageView sellIcon = (ImageView) view.findViewById(R.id.list_item_sell_icon);
             sellIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int decQuantity = itemQuantity;
-                    if (decQuantity-1 < 0){
+                    // decrement the current item's quantity by one
+                    int decQuantity = itemQuantity-1;
+                    if (decQuantity < 0){ /*cannot go below 0*/
                         Toast.makeText(mContext, "Quantity cannot be negative", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.i("InventoryCursorAdapter", "decremented quantity: " + decQuantity--);
+                    } else { /* update quantity */
                         ContentValues values = new ContentValues();
-                        values.put(InventoryEntry.COLUMN_QUANTITY, decQuantity--);
+                        values.put(InventoryEntry.COLUMN_QUANTITY, decQuantity);
                         Uri currentItemUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, currentItemID);
                         mContext.getContentResolver().update(currentItemUri, values, null, null);
                     }

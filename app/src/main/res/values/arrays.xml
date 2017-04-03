@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+<string-array name="radiobutton_options">
+    <item>@string/name_asc_radio_button</item>
+    <item>@string/name_desc_radio_button</item>
+    <item>@string/price_asc_radio_button</item>
+    <item>@string/price_desc_radio_button</item>
+    <item>@string/quantity_asc_radio_button</item>
+    <item>@string/quantity_desc_radio_button</item>
+</string-array>
+</resources>

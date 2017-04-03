@@ -2,6 +2,7 @@
     <string name="app_name">Inventory App</string>
     <string name="detail_activity">Item details</string>
     <string name="add_item_activity">Add item</string>
+    <string name="dialog_activity">Dialog activity</string>
 
     <!--labels for the empty view-->
     <string name="empty_view_title_text">No items to display</string>
@@ -16,6 +17,7 @@
     <string name="insert_dummy_data">Insert dummy data</string>
     <string name="clear_all">Clear all</string>
     <string name="change_view">Change view</string>
+    <string name="sort_by">Sort by</string>
     <!--labels for buttons and corresponding views in detail activity-->
     <string name="track_button">Track</string>
     <string name="track_item">Track item (sell)</string>
@@ -61,4 +63,13 @@
     <string name="dummy_supplier_name">Hammer!</string>
     <string name="dummy_supplier_web">hammermegently.com</string>
     <string name="dummy_supplier_email">hammer@me.com</string>
+
+    <!--labels for radio buttons-->
+    <string name="sorty_by_title">Sort by</string>
+    <string name="name_asc_radio_button">Name ascending</string>
+    <string name="name_desc_radio_button">Name descending</string>
+    <string name="price_asc_radio_button">Price ascending</string>
+    <string name="price_desc_radio_button">Price descending</string>
+    <string name="quantity_asc_radio_button">Quantity ascending</string>
+    <string name="quantity_desc_radio_button">Quantity descending</string>
 </resources>

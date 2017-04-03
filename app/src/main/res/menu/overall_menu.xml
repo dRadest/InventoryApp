@@ -16,5 +16,9 @@
         android:id="@+id/change_view"
         android:title="@string/change_view"
         android:showAsAction="never" />
+    <item
+        android:id="@+id/action_sort"
+        android:title="@string/sort_by"
+        android:showAsAction="never"/>
 
 </menu>

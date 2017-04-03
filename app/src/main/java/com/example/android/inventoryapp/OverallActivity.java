@@ -1,5 +1,6 @@
 package com.example.android.inventoryapp;
 
+import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -62,6 +63,12 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
 
     // view stubs for list and grid views
     private ViewStub mListViewStub, mGridViewStub;
+
+    // variable to hold sort order
+    private String mSortOrder = null;
+
+    // request code to start the activity for result
+    private static final int SORT_BY_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +158,6 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
     @Override
     protected void onStart() {
         super.onStart();
-        changeViews();
     }
 
     @Override
@@ -166,6 +172,13 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
         // Commit the edits!
         editor.apply();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(ITEM_LOADER, null, this);
+        changeViews();
     }
 
     @Override
@@ -193,7 +206,11 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
                 mGridVisible = !mGridVisible;
                 changeViews();
                 return true;
+            case R.id.action_sort:
+                displayRadioButtonsAlertDialog();
+                return true;
         }
+        mListView.invalidateViews();
         return super.onOptionsItemSelected(item);
     }
 
@@ -236,7 +253,7 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
                 projection,
                 null,
                 null,
-                null);
+                mSortOrder);
     }
 
     @Override
@@ -283,5 +300,41 @@ public class OverallActivity extends AppCompatActivity implements LoaderManager.
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+    // helper method to start the DialogActivity
+    private void displayRadioButtonsAlertDialog(){
+        Intent dialogIntent = new Intent(OverallActivity.this, DialogActivity.class);
+        startActivityForResult(dialogIntent, SORT_BY_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SORT_BY_REQUEST && resultCode == RESULT_OK){
+            Bundle extras = data.getExtras();
+            int intExtra = extras.getInt(DialogActivity.EXTRA_STRING);
+            // set the sort order based on integer received from the activity
+            switch (intExtra){
+                    case 0:
+                        mSortOrder = InventoryEntry.COLUMN_SUPPLIER_NAME + " ASC";
+                        break;
+                    case 1:
+                        mSortOrder = InventoryEntry.COLUMN_SUPPLIER_NAME + " DESC";
+                        break;
+                    case 2:
+                        mSortOrder = InventoryEntry.COLUMN_PRICE + " ASC";
+                        break;
+                    case 3:
+                        mSortOrder = InventoryEntry.COLUMN_PRICE + " DESC";
+                        break;
+                    case 4:
+                        mSortOrder = InventoryEntry.COLUMN_QUANTITY + " ASC";
+                        break;
+                    case 5:
+                        mSortOrder = InventoryEntry.COLUMN_QUANTITY + " DESC";
+                        break;
+                }
+            Toast.makeText(mContext, "mSortOrder: " + mSortOrder, Toast.LENGTH_SHORT).show();
+
+        }
     }
 }
