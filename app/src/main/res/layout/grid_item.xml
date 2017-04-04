@@ -20,7 +20,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:paddingBottom="8dp"
-        android:text="@string/supplier_name"
+        android:text="@string/product_name"
         android:textColor="#fafafa"
         android:textSize="16sp"
         android:textStyle="bold" />

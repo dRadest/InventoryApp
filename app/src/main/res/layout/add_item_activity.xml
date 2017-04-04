@@ -12,6 +12,17 @@
             style="@style/TextboxDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/product_name"/>
+        <EditText
+            android:inputType="textCapWords"
+            android:id="@+id/name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_product_name"/>
+        <TextView
+            style="@style/TextboxDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/price_title"/>
         <EditText
             android:inputType="numberDecimal"
@@ -30,17 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/enter_quantity"/>
-        <TextView
-            style="@style/TextboxDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/supplier_name"/>
-        <EditText
-            android:inputType="textCapWords"
-            android:id="@+id/name_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/enter_supplier_name"/>
+
         <TextView
             style="@style/TextboxDetail"
             android:layout_width="match_parent"

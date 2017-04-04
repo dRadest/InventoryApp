@@ -2,7 +2,7 @@
     <string name="app_name">Inventory App</string>
     <string name="detail_activity">Item details</string>
     <string name="add_item_activity">Add item</string>
-    <string name="dialog_activity">Dialog activity</string>
+    <string name="dialog_activity">Sort by</string>
 
     <!--labels for the empty view-->
     <string name="empty_view_title_text">No items to display</string>
@@ -11,7 +11,7 @@
     <!--labels for detail textviews-->
     <string name="price_title">Price</string>
     <string name="quantity_title">Quantity</string>
-    <string name="supplier_title">Supplier</string>
+    <string name="supplier_title">Supplier\'s Info</string>
 
     <!--labels for overall menu items-->
     <string name="insert_dummy_data">Insert dummy data</string>
@@ -50,8 +50,8 @@
     <!--labels for views in add item activity-->
     <string name="enter_price">Enter item\'s price</string>
     <string name="enter_quantity">Enter item\'s quantity</string>
-    <string name="supplier_name">Supplier\'s Name</string>
-    <string name="enter_supplier_name">Enter supplier\'s name</string>
+    <string name="product_name">Product Name</string>
+    <string name="enter_product_name">Enter name of the product</string>
     <string name="supplier_web">Supplier\'s Web</string>
     <string name="enter_supplier_web">Enter supplier\'s web address</string>
     <string name="supplier_email">Supplier\'s Email</string>
